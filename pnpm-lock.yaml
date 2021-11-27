@@ -1,0 +1,11 @@
+importers:
+  .:
+    specifiers: {}
+  packages/utils:
+    specifiers: {}
+  packages/ws:
+    dependencies:
+      '@my-lib/utils': link:../utils
+    specifiers:
+      '@my-lib/utils': workspace:^1.0.0
+lockfileVersion: 5.2
