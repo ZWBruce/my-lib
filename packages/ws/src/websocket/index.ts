@@ -65,8 +65,8 @@ export default class MyWebSocket extends EventEmitter {
   }
 
   // 拿到的原始数据是二进制，需要转换下
-  processBufferMeta(buffer?: Buffer) {
-    const buf = buffer || this.buffer;
+  processBufferMeta() {
+    const buf = this.buffer; // buffer 手动 gc
     // 真实数据的起始位置 / byte
     let payloadIndex = 2;
     // 从前 8 位中获取 FIN，RSV1，RSV2，RSV3，OPCODE，MASK，PAYLOAD LEN
@@ -123,6 +123,8 @@ export default class MyWebSocket extends EventEmitter {
       payloadIndex + 4,
       payloadIndex + PAYLOAD_LEN
     );
+    // 手动 gc
+    this.buffer = this.buffer.slice(payloadIndex + PAYLOAD_LEN);
     return data.map((byte, index) => byte ^ mask[index % 4]);
   }
 
