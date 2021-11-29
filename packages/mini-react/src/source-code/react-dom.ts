@@ -34,7 +34,7 @@ function renderDom(element: any): any {
         dom.setAttribute(key, props[key]);
       });
     } else if (isFunction(type)) {
-      // 函数组件或者类组件只是解析第一层，children 需要继续解析.
+      // 函数组件或者类组件只是解析第一层，children 需要继续解析
       if (type.prototype.isReactComponent) {
         const { type: Comp } = element;
         const comp = new Comp(props);
