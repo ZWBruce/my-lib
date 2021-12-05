@@ -27,7 +27,7 @@ export default class MyWebSocket extends EventEmitter {
     this.closed = false;
 
     this.socket = socket;
-    const secKey = req.headers['sec-websocket-key'];
+    const secKey = req.headers['sec-websocket-key'] as string;
     const resHeaders = [
       'HTTP/1.1 101 Switching Protocols', // http 2 是否支持？
       'Upgrade: websocket',
@@ -117,12 +117,10 @@ export default class MyWebSocket extends EventEmitter {
     if (!MASK) {
       return this.buffer.slice(payloadIndex, payloadIndex + PAYLOAD_LEN);
     }
+    const start = payloadIndex + 4;
     // 如果有 MASK，需要对数据进行解码
-    const mask = this.buffer.slice(payloadIndex, payloadIndex + 4);
-    const data = this.buffer.slice(
-      payloadIndex + 4,
-      payloadIndex + PAYLOAD_LEN
-    );
+    const mask = this.buffer.slice(payloadIndex, start);
+    const data = this.buffer.slice(start, payloadIndex + start);
     // 手动 gc
     this.buffer = this.buffer.slice(payloadIndex + PAYLOAD_LEN);
     return data.map((byte, index) => byte ^ mask[index % 4]);
