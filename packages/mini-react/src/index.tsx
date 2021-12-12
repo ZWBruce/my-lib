@@ -2,7 +2,8 @@ import { render } from '@source/react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-
+import { run } from '@source/fiber';
+run();
 render(<App />, document.getElementById('root'));
 
 // If you want to start measuring performance in your app, pass a function

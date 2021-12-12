@@ -1,9 +1,10 @@
-import { isString, isNumber, isArray, isFunction } from 'lodash';
+import { isString, isNumber, isFunction } from 'lodash';
+export { createRoot as render } from './fiber';
 
-function render(element: any, container?: HTMLElement | null) {
-  const dom = renderDom(element);
-  container?.appendChild(dom);
-}
+// function render(element: any, container?: HTMLElement | null) {
+//   const dom = renderDom(element);
+//   container?.appendChild(dom);
+// }
 
 function mountAttributes(props: Record<string, any>, dom: HTMLElement) {
   for (const k in props) {
@@ -27,17 +28,18 @@ function mountAttributes(props: Record<string, any>, dom: HTMLElement) {
   }
 }
 
-function renderDom(element: any): any {
+// 抽离递归逻辑
+export function renderDom(element: any): any {
   if (isString(element) || isNumber(element)) {
     return document.createTextNode(`${element}`);
   }
-  if (isArray(element)) {
-    const dom = document.createDocumentFragment();
-    element.forEach((t) => {
-      dom.appendChild(renderDom(t));
-    });
-    return dom;
-  }
+  // if (isArray(element)) {
+  //   const dom = document.createDocumentFragment();
+  //   element.forEach((t) => {
+  //     dom.appendChild(renderDom(t));
+  //   });
+  //   return dom;
+  // }
   // class 组件 或者 函数组件，额外处理
   if (isFunction(element)) {
     return renderDom(element());
@@ -45,30 +47,28 @@ function renderDom(element: any): any {
   // 根据组件 type 判断是原生 dom 还是 react 组件，并根据 type 创建元素、把 props 传给元素
   if (element?.type) {
     const { type, props } = element;
-    const children = props.children;
+    // const children = props.children;
     let dom: any;
     if (isString(type)) {
       dom = document.createElement(type);
-    } else if (isFunction(type)) {
-      // 函数组件或者类组件只是解析第一层，children 需要继续解析
-      if (type.prototype.isReactComponent) {
-        const { type: Comp } = element;
-        const comp = new Comp(props);
-        dom = renderDom(comp.render());
-      } else {
-        const { type: fn } = element;
-        dom = renderDom(fn(props));
-      }
+      // } else if (isFunction(type)) {
+      //   // 函数组件或者类组件只是解析第一层，children 需要继续解析
+      //   if (type.prototype.isReactComponent) {
+      //     const { type: Comp } = element;
+      //     const comp = new Comp(props);
+      //     dom = renderDom(comp.render());
+      //   } else {
+      //     const { type: fn } = element;
+      //     dom = renderDom(fn(props));
+      //   }
     }
 
     mountAttributes(props, dom);
 
-    if (children) {
-      dom.appendChild(renderDom(children));
-    }
+    // if (children) {
+    //   dom.appendChild(renderDom(children));
+    // }
 
     return dom;
   }
 }
-
-export { render };

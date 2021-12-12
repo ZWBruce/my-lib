@@ -1,4 +1,5 @@
 import './App.css';
+import Cmp1 from '@src/components/Cmp1';
 
 function App() {
   const handleClick = () => {
@@ -9,6 +10,7 @@ function App() {
       <header onClick={handleClick} style={{ color: 'red' }}>
         hello mini-react
       </header>
+      <Cmp1 />
     </div>
   );
 }
