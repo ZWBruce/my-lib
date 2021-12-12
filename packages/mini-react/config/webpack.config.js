@@ -38,7 +38,6 @@ const webpackDevClientEntry = require.resolve(
 const reactRefreshOverlayEntry = require.resolve(
   'react-dev-utils/refreshOverlayInterop'
 );
-console.log('process.env.WDS_SOCKET_PORT', process.env.WDS_SOCKET_PORT);
 // Some apps do not need the benefits of saving a web request, so not inlining the chunk
 // makes for a smoother build process.
 const shouldInlineRuntimeChunk = process.env.INLINE_RUNTIME_CHUNK !== 'false';
@@ -333,6 +332,8 @@ module.exports = function (webpackEnv) {
           'scheduler/tracing': 'scheduler/tracing-profiling',
         }),
         ...(modules.webpackAliases || {}),
+        '@source': path.resolve(__dirname, '../src/source-code'),
+        '@src': path.resolve(__dirname, '../src'),
       },
       plugins: [
         // Adds support for installing with Plug'n'Play, leading to faster installs and adding

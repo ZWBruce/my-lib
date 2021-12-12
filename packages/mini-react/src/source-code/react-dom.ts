@@ -5,6 +5,28 @@ function render(element: any, container?: HTMLElement | null) {
   container?.appendChild(dom);
 }
 
+function mountAttributes(props: Record<string, any>, dom: HTMLElement) {
+  for (const k in props) {
+    if (k === 'children') {
+      return;
+    }
+    const value = props[k];
+    if (k === 'style') {
+      for (const k in value) {
+        dom.style[k as any] = value[k];
+      }
+    } else if (k === 'className') {
+      const classNames = value.split(/\s+/);
+      dom.classList.add(...classNames);
+    } else if (k.startsWith('on')) {
+      const eventName = k.substring(2).toLowerCase();
+      dom.addEventListener(eventName, value);
+    } else {
+      dom.setAttribute(k, value);
+    }
+  }
+}
+
 function renderDom(element: any): any {
   if (isString(element) || isNumber(element)) {
     return document.createTextNode(`${element}`);
@@ -20,19 +42,13 @@ function renderDom(element: any): any {
   if (isFunction(element)) {
     return renderDom(element());
   }
+  // 根据组件 type 判断是原生 dom 还是 react 组件，并根据 type 创建元素、把 props 传给元素
   if (element?.type) {
-    console.log(element.type, element.props);
     const { type, props } = element;
     const children = props.children;
     let dom: any;
     if (isString(type)) {
       dom = document.createElement(type);
-      Object.keys(props).forEach((key) => {
-        if (key === 'children') {
-          return;
-        }
-        dom.setAttribute(key, props[key]);
-      });
     } else if (isFunction(type)) {
       // 函数组件或者类组件只是解析第一层，children 需要继续解析
       if (type.prototype.isReactComponent) {
@@ -45,6 +61,8 @@ function renderDom(element: any): any {
       }
     }
 
+    mountAttributes(props, dom);
+
     if (children) {
       dom.appendChild(renderDom(children));
     }
@@ -53,4 +71,4 @@ function renderDom(element: any): any {
   }
 }
 
-export default { render };
+export { render };

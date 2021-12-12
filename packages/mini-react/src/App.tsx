@@ -1,9 +1,14 @@
 import './App.css';
 
 function App() {
+  const handleClick = () => {
+    console.log('click');
+  };
   return (
-    <div>
-      <header>hello mini-react</header>
+    <div className="app-container">
+      <header onClick={handleClick} style={{ color: 'red' }}>
+        hello mini-react
+      </header>
     </div>
   );
 }
