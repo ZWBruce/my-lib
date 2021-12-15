@@ -5,9 +5,10 @@ const Cmp1: FC = () => {
   return (
     <div>
       Cmp1
-      {arr.map((item) => (
-        <div>{item}</div>
+      {arr.map((item, i) => (
+        <div key={i}>{item}</div>
       ))}
+      <input type="text" />
     </div>
   );
 };

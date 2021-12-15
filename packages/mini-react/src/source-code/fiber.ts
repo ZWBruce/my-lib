@@ -1,8 +1,9 @@
 import { isFunction } from 'lodash';
 import { renderDom } from './react-dom';
+import { commitRoot } from './commiter';
 
 let nextUnitOfWork: any = null;
-// let rootFiber: any = null;
+let rootFiber: any = null;
 
 let id = 0;
 // TODO 看下是否会死循环
@@ -27,7 +28,7 @@ const getFiber = ({
 // 每一个 fiber 节点都有两个属性：contariner(真实 dom) 和 element（虚拟 dom）
 export function createRoot(element: any, container: HTMLElement | null) {
   // 创建一个 root fiber
-  nextUnitOfWork = getFiber({
+  nextUnitOfWork = rootFiber = getFiber({
     stateNode: container,
     element: {
       props: {
@@ -45,6 +46,11 @@ function workLoop(deadLine: any) {
     shouldYield = deadLine.timeRemaining() > 1;
   }
   requestIdleCallback(workLoop);
+
+  if (!nextUnitOfWork && rootFiber) {
+    commitRoot(rootFiber);
+    rootFiber = null;
+  }
 }
 
 export function run() {
@@ -63,15 +69,15 @@ function performUnitOfWork(fiber: any) {
     // 创建 dom 节点
     stateNode = fiber.stateNode = renderDom(element);
   }
-  // 挂载
-  if (parentFiber && stateNode) {
-    while (!parentFiber.stateNode) {
-      parentFiber = parentFiber.return;
-    }
-    parentFiber.stateNode.appendChild(stateNode);
-  }
+  // 挂载 构建 fiber 树 和 渲染分离
+  // if (parentFiber && stateNode) {
+  //   while (!parentFiber.stateNode) {
+  //     parentFiber = parentFiber.return;
+  //   }
+  //   parentFiber.stateNode.appendChild(stateNode);
+  // }
 
-  // 2-1 将 children 转为虚拟 dom
+  // 2-1 将 children 转为虚拟 dom（对应 renderDom 中 type 为 function 部分）
   let children = element?.props?.children;
   const type = element?.type;
 
