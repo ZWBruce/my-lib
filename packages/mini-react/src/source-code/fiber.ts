@@ -25,7 +25,7 @@ const getFiber = ({
   id: ++id,
 });
 
-// 每一个 fiber 节点都有两个属性：contariner(真实 dom) 和 element（虚拟 dom）
+// 每一个 fiber 节点都有两个属性：stateNode(下面别名 container，真实 dom) 和 element（虚拟 dom）
 export function createRoot(element: any, container: HTMLElement | null) {
   // 创建一个 root fiber
   nextUnitOfWork = rootFiber = getFiber({
